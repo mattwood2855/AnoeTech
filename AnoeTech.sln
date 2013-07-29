@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnoeTech", "AnoeTech\AnoeTech\AnoeTech.csproj", "{3855FCEB-7E76-476E-8D8B-1AD0EACAD375}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "AnoeTechContent", "AnoeTech\AnoeTechContent\AnoeTechContent.contentproj", "{D229F0DB-0B2F-48A3-9FC9-5EA35AD9C92A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3855FCEB-7E76-476E-8D8B-1AD0EACAD375}.Debug|x86.ActiveCfg = Debug|x86
+		{3855FCEB-7E76-476E-8D8B-1AD0EACAD375}.Debug|x86.Build.0 = Debug|x86
+		{3855FCEB-7E76-476E-8D8B-1AD0EACAD375}.Release|x86.ActiveCfg = Release|x86
+		{3855FCEB-7E76-476E-8D8B-1AD0EACAD375}.Release|x86.Build.0 = Release|x86
+		{D229F0DB-0B2F-48A3-9FC9-5EA35AD9C92A}.Debug|x86.ActiveCfg = Debug|x86
+		{D229F0DB-0B2F-48A3-9FC9-5EA35AD9C92A}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
