@@ -103,7 +103,7 @@ namespace AnoeTech
         {
             // Create a Commander Node
             commanderNode = new SGNCommander();
-            packet.position = new Vector3(300, 350, -300);
+            packet.position = new Vector3(300, 450, -1000);
             freeRoamNode.cameraPositions = new Vector3[1] { new Vector3(0, 0, 0) };
             commanderNode.Initiate(packet);
         }
@@ -161,17 +161,18 @@ namespace AnoeTech
 
         private void LoadLevel()
         {
+            Texture2D heightmap = GameState.contentManager.Load<Texture2D>("HeightMaps/heightmapBig");
             terrainStep = 15;
             terrainScale = 1;
             _skyDome = new SGNSkyDome();
-            _terrainNodes = TerrainNodeBuilder.BuildHeightmaps(GameState.contentManager.Load<Texture2D>("HeightMaps/heightmapBig"), terrainStep, terrainScale);
+            _terrainNodes = TerrainNodeBuilder.BuildHeightmaps(heightmap, terrainStep, terrainScale);
             foreach (SGNHeightmap hm in _terrainNodes)
             {
                 hm.Initiate(world);
             }
 
-            terrainWidthTotal = _terrainNodes[0].terrainWidth * terrainScale;
-            terrainHeightTotal = _terrainNodes[0].terrainHeight * terrainScale;
+            terrainWidthTotal = heightmap.Width * terrainStep;
+            terrainHeightTotal = heightmap.Height * terrainStep;
         }
 
         public void BuildMiniMap()
@@ -241,7 +242,7 @@ namespace AnoeTech
 
         public void Update()
         {
-            _timeOfDay += 0.1f;
+            _timeOfDay += 0.01f;
             if (_timeOfDay >= 1440)
                 _timeOfDay = 0.01f;
 
@@ -264,12 +265,20 @@ namespace AnoeTech
 
         public void Draw()
         {
+            BasicEffect lineEffect = new BasicEffect(GraphicsEngine.graphicsDevice);
+            lineEffect.LightingEnabled = false;
+            lineEffect.TextureEnabled = false;
+            lineEffect.VertexColorEnabled = true;
+
             if(InputHandler.InputMode != InputHandler.InputModes.RTS)
                 _skyDome.Draw(_timeOfDay);
 
             foreach (SGNHeightmap hm in _terrainNodes)
-                hm.Draw(null);
-
+            {
+                //if (GraphicsEngine.camera._frustum.Intersects(hm.boundingBox))
+                    hm.Draw(null);
+                Debug.DrawBoundingBox(Debug.CreateBoundingBoxBuffers(hm.boundingBox, GraphicsEngine.graphicsDevice), lineEffect, GraphicsEngine.graphicsDevice, GraphicsEngine.camera.ViewMatrix, GraphicsEngine.projectionMatrix);
+            }
             if (nodes != null)
                 foreach (SGNUnit unit in nodes)
                     unit.Draw(null);

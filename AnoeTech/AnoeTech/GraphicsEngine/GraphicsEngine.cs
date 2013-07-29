@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AnoeTech
 {
+
     public struct VertexMultitextured
     {
         public Vector3 Position;
@@ -36,6 +37,16 @@ namespace AnoeTech
         public static            SpriteFont font;
         public static              Viewport viewport;
 
+        public static float fov, ar;
+
+        public static void FieldOfView(float fov, float ar)
+        {
+            GraphicsEngine.fov = (float)(fov > Math.PI ? Math.PI : (fov < 0 ? 0:fov));
+            GraphicsEngine.ar = ar;
+            Matrix tempFov =  Matrix.CreatePerspectiveFieldOfView(GraphicsEngine.fov, GraphicsEngine.ar, 0.5f, 5000.0f);
+            GraphicsEngine.projectionMatrix = tempFov;
+        }
+
         public static void Initialize()
         {
             graphicsDevice = graphicsDeviceManager.GraphicsDevice;      // Create a global reference to the Graphics Device
@@ -43,7 +54,9 @@ namespace AnoeTech
             spriteBatch = new SpriteBatch(graphicsDevice);
             font = GameState.contentManager.Load<SpriteFont>("Fonts/Verdana");
             ChangeResolution(800, 450, false);
-            GraphicsEngine.projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsEngine.viewport.AspectRatio, 0.5f, 5000.0f);
+             fov = MathHelper.PiOver4;
+             ar = GraphicsEngine.viewport.AspectRatio;
+            GraphicsEngine.projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.Pi/4, GraphicsEngine.viewport.AspectRatio, 0.5f, 5000.0f);
             camera = new Camera(); camera.Initiate();
             GraphicsEngine.hud = new HUD(); GraphicsEngine.hud.Initiate();
         }

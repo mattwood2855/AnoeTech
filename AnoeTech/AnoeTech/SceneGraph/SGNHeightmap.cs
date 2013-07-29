@@ -23,9 +23,10 @@ namespace AnoeTech
         private int _drawDistance = 9;
         public int terrainWidth, terrainHeight;
         public float terrainStep, terrainScale;
-        
-        public VertexBuffer terrainVertexBuffer, DrawableTerrainVertexBuffer;
-        public IndexBuffer terrainIndexBuffer, DrawableIndexBuffer;
+        public BoundingBox boundingBox;
+        public float maxHeight = 0;
+        public VertexBuffer terrainVertexBuffer;
+        public IndexBuffer terrainIndexBuffer;
         
         public VertexMultitextured[] vertices, drawableVertices;
         public int[] indices;
@@ -65,6 +66,8 @@ namespace AnoeTech
             _heightData = TerrainNodeBuilder.CreateHeightMatrix(heightMapData, step, scale);
             terrainStep = step;
             terrainScale = scale;
+            terrainWidth = heightMapData.Width;
+            terrainHeight = heightMapData.Height;   
             effect = GameState.contentManager.Load<Effect>("effects");  // Load an effect shader file for the heightmap
         }
 
@@ -74,6 +77,8 @@ namespace AnoeTech
             _heightData = heightMapData;                             // Create a local reference to the height data
             terrainStep = step;
             terrainScale = scale;
+            terrainWidth = heightMapData.GetLength(0);
+            terrainHeight = heightMapData.GetLength(1);   
             effect = GameState.contentManager.Load<Effect>("effects");  // Load an effect shader file for the heightmap
         }
 
@@ -94,10 +99,7 @@ namespace AnoeTech
             catch(Exception e){}
 
             lightDirection = new Vector3(0.4f, -0.47f, -1.0f);
-            ambientLighting = 1.0f;
-
-            terrainWidth = 128;
-            terrainHeight = 128;            
+            ambientLighting = 1.0f;         
             
             SetUpVertices();
             SetUpIndices();
@@ -134,6 +136,7 @@ namespace AnoeTech
             triangleBody.IsStatic = true;
             world.AddBody(triangleBody);
             BuildDrawableHeightMap();
+            boundingBox = new BoundingBox(_position, _position + new Vector3(terrainStep*terrainWidth,maxHeight,terrainStep*terrainHeight));
         }
 
         public override void Destroy()
@@ -144,24 +147,24 @@ namespace AnoeTech
         private void SetUpVertices()
         {
             
-            vertices = new VertexMultitextured[terrainWidth * terrainHeight];
             for (int y = 0; y < terrainHeight; y++)
+                for (int x = 0; x < terrainWidth; x++)
+                    if (_heightData[x, y] > maxHeight)
+                        maxHeight = _heightData[x, y];
+
+            vertices = new VertexMultitextured[terrainWidth * terrainHeight];
+            
             for (int x = 0; x < terrainWidth; x++)
-                
+                for (int y = 0; y < terrainHeight; y++)
                 {
                     vertices[x + y * terrainWidth].Position = new Vector3(x*terrainStep, _heightData[x, y], -y*terrainStep);
                     vertices[x + y * terrainWidth].TextureCoordinate.X = (float)x * terrainStep / 256.0f;
                     vertices[x + y * terrainWidth].TextureCoordinate.Y = (float)y * terrainStep / 256.0f;
-                    
-                    float points = from x in Enumerable.Range(0, this.Size.Width - 1)
-                                 from y in Enumerable.Range(0, this.Size.Width - 1)
-                                 where this.Map[x, y]
-                                 select new { X = x, Y = y };
-                    float max = points.Max(p => p);
-                    vertices[x + y * terrainWidth].TexWeights.X = MathHelper.Clamp(1.0f - Math.Abs(_heightData[x, y] - 0) / (300 / 5), 0, 1);
-                    vertices[x + y * terrainWidth].TexWeights.Y = MathHelper.Clamp(1.0f - Math.Abs(_heightData[x, y] - 300 * 0.2f) / (300 / 4), 0, 1);
-                    vertices[x + y * terrainWidth].TexWeights.Z = MathHelper.Clamp(1.0f - Math.Abs(_heightData[x, y] - 300 * 0.6f) / (300 / 5), 0, 1);
-                    vertices[x + y * terrainWidth].TexWeights.W = MathHelper.Clamp(1.0f - Math.Abs(_heightData[x, y] - 300) / (300 / 4), 0, 1);
+
+                    vertices[x + y * terrainWidth].TexWeights.X = MathHelper.Clamp(1.0f - Math.Abs(_heightData[x, y] - 0) / (maxHeight / 5), 0, 1);
+                    vertices[x + y * terrainWidth].TexWeights.Y = MathHelper.Clamp(1.0f - Math.Abs(_heightData[x, y] - maxHeight * 0.2f) / (maxHeight / 4), 0, 1);
+                    vertices[x + y * terrainWidth].TexWeights.Z = MathHelper.Clamp(1.0f - Math.Abs(_heightData[x, y] - maxHeight * 0.6f) / (maxHeight / 5), 0, 1);
+                    vertices[x + y * terrainWidth].TexWeights.W = MathHelper.Clamp(1.0f - Math.Abs(_heightData[x, y] - maxHeight) / (maxHeight / 4), 0, 1);
 
                     float total = vertices[x + y * terrainWidth].TexWeights.X;
                     total += vertices[x + y * terrainWidth].TexWeights.Y;
@@ -292,8 +295,7 @@ namespace AnoeTech
         }
 
         public override void Draw( Object obj )
-        {
-
+        {            
             effect.CurrentTechnique = effect.Techniques["MultiTextured"];
             effect.Parameters["xTexture0"].SetValue(sandTexture);
             effect.Parameters["xTexture1"].SetValue(grassTexture);

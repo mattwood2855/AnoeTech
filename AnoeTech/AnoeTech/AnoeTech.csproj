@@ -141,6 +141,7 @@
     <Compile Include="AudioManager.cs" />
     <Compile Include="HUD\HUDHealthBar.cs" />
     <Compile Include="Input\InputMap.cs" />
+    <Compile Include="SceneGraph\Debug.cs" />
     <Compile Include="SceneGraph\IController.cs" />
     <Compile Include="SceneGraph\SceneGraph.cs" />
     <Compile Include="SceneGraph\SceneGraphNode.cs" />

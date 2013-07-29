@@ -72,6 +72,10 @@ namespace AnoeTech
             if (GraphicsEngine.camera.Target != null)                       // Protect against intermitent null states
                 GraphicsEngine.camera.Target.AddToVelocity(moveVector * GraphicsEngine.camera.Target.moveSpeed * GameState.timeDifference); // Add the move vector to the free roam node
 
+            if (keyboardState.IsKeyDown(Keys.OemPlus))
+                GraphicsEngine.FieldOfView((float)(GraphicsEngine.fov + 0.1), GraphicsEngine.viewport.AspectRatio);
+            if (keyboardState.IsKeyDown(Keys.OemMinus))
+                GraphicsEngine.FieldOfView((float)(GraphicsEngine.fov - 0.1), GraphicsEngine.viewport.AspectRatio);
             
         }
         private static void RTSController()

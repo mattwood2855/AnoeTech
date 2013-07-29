@@ -19,16 +19,16 @@ namespace AnoeTech
         public override void Update()
         {
             
-            if ( _position.X - (GraphicsEngine.camera.FarFustrum.Width/2) < 0 )
+            if ( _position.X - (GraphicsEngine.camera.FarFustrum.D*2) < 0 )
                 if (_localVelocities.X < 0)
                     _localVelocities.X = 0;
-            if (_position.X + (GraphicsEngine.camera.FarFustrum.Width / 2) > GameState.anoetech.sceneGraph.terrainWidthTotal)
+            if (_position.X + (GraphicsEngine.camera.FarFustrum.D*2) > GameState.anoetech.sceneGraph.terrainWidthTotal)
                 if (_localVelocities.X > 0)
                     _localVelocities.X = 0;
-            if (_position.Z - (GraphicsEngine.camera.FarFustrum.Height / 2) < -GameState.anoetech.sceneGraph.terrainHeightTotal)
+            if (_position.Z - (GraphicsEngine.camera.FarFustrum.D*2) < -GameState.anoetech.sceneGraph.terrainHeightTotal)
                 if (_localVelocities.Z < 0)
                     _localVelocities.Z = 0;
-            if (_position.Z + (GraphicsEngine.camera.FarFustrum.Height / 2) > 0)
+            if (_position.Z + (GraphicsEngine.camera.FarFustrum.D*2) > 0)
                 if (_localVelocities.Z > 0)
                     _localVelocities.Z = 0;
             if (_position.Y > 2500)

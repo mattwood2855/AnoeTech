@@ -10,14 +10,15 @@ namespace AnoeTech
     public class Camera : Movable
     {
         private         Matrix _viewMatrix;
+        public BoundingFrustum _frustum;
         private SceneGraphNode _target;
-        private Rectangle _fustrumFar;
+        private Plane _frustumFar;
         private bool _transitioning;
         float _originalTargetDistance;
 
         public SceneGraphNode Target { get { return _target; } }
         public     Matrix ViewMatrix { get { return _viewMatrix; } }
-        public Rectangle FarFustrum { get { return _fustrumFar; } }
+        public Plane FarFustrum { get { return _frustumFar; } }
 
         public void Initiate()
         {
@@ -125,10 +126,9 @@ namespace AnoeTech
         }
 
         public void CalculateFustrum()
-        {
-            int Hfar = (int)Math.Ceiling(2 * (float)Math.Tan(45.0f / 2.0f) * _target.Position.Y);
-            int Wfar = (int)Math.Ceiling(Hfar * (float)(GraphicsEngine.viewport.Width / GraphicsEngine.viewport.Height));
-            _fustrumFar = new Rectangle((int)Math.Ceiling(_target.Position.X), (int)Math.Ceiling(_target.Position.Z), Hfar, Wfar - 175);
+        {         
+            _frustum = new BoundingFrustum(GraphicsEngine.projectionMatrix * _viewMatrix);
+            _frustumFar = _frustum.Far;
         }
 
         public void LockToNode(SceneGraphNode target, bool smoothTransition)
