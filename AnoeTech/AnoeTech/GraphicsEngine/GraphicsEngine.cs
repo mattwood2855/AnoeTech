@@ -41,7 +41,7 @@ namespace AnoeTech
 
         public static void FieldOfView(float fov, float ar)
         {
-            GraphicsEngine.fov = (float)(fov > Math.PI ? Math.PI : (fov < 0 ? 0:fov));
+            GraphicsEngine.fov = (float)(fov > Math.PI ? Math.PI-.01 : (fov < 0 ? 0.01:fov));
             GraphicsEngine.ar = ar;
             Matrix tempFov =  Matrix.CreatePerspectiveFieldOfView(GraphicsEngine.fov, GraphicsEngine.ar, 0.5f, 5000.0f);
             GraphicsEngine.projectionMatrix = tempFov;

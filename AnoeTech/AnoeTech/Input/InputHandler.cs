@@ -180,7 +180,7 @@ namespace AnoeTech
             }
 
             if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
-            {
+            {                
                 moveVector += new Vector3(0, 0, -0.5f);
             }
             if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))

@@ -102,7 +102,10 @@ namespace AnoeTech
                 else
                 {
                     if (_target.GetType() == typeof(SGNUnitTank))
+                    {
                         _position = _target.Position - 10 * _target.localVelocities + _target.cameraPositions[0];
+                        GraphicsEngine.FieldOfView(MathHelper.PiOver4 + (Target.currentSpeed * MathHelper.Pi/16), GraphicsEngine.viewport.AspectRatio);
+                    }
                     else
                         _position = _target.Position + _target.cameraPositions[0];
 
@@ -117,7 +120,7 @@ namespace AnoeTech
                     Vector3 cameraOriginalUpVector = new Vector3(0, 1, 0);
                     Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, cameraRotation);
 
-
+                    
                     _viewMatrix = Matrix.CreateLookAt(_position, cameraFinalTarget, cameraRotatedUpVector);
                     
                 }

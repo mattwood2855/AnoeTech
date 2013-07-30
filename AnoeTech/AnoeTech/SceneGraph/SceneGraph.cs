@@ -113,8 +113,9 @@ namespace AnoeTech
             packet = new InitPacket();
             // Create a Free Roam Node
             freeRoamNode = new SGNFreeRoam();
-            freeRoamNode.Position = new Vector3(200, 150, -400);
-            freeRoamNode.updownRot = 3 * MathHelper.PiOver2;
+            freeRoamNode.Position = new Vector3(10, 200, -10);
+            freeRoamNode.updownRot = 0;
+            freeRoamNode.leftrightRot = 0;
             freeRoamNode.cameraPositions = new Vector3[1] { new Vector3(0, 0, 0) };
             freeRoamNode.moveSpeed = 20.0f;
         }
@@ -140,7 +141,7 @@ namespace AnoeTech
 
             //Load a tank
             packet = new InitPacket();
-            packet.position = new Vector3(600, 70, -600);
+            packet.position = new Vector3(800, 200, -1000);
             packet.modelFiles[0] = "Models/tank";
             Shape shape = new BoxShape(4, 4, 4);
             RigidBody body = new RigidBody(shape);
@@ -148,7 +149,7 @@ namespace AnoeTech
             packet.rigidBodies = new RigidBody[1] { body };
             packet.textures = new string[] { "Textures/digcamo", "Textures/steel" };
             packet.cameraPositions = new Vector3[] { new Vector3(0, 5.5f, 0.0f) };
-            packet.mass = 10000;
+            packet.mass = 5000;
             
 
             _preLoadedModels = new Model[2];
@@ -275,9 +276,9 @@ namespace AnoeTech
 
             foreach (SGNHeightmap hm in _terrainNodes)
             {
-                //if (GraphicsEngine.camera._frustum.Intersects(hm.boundingBox))
+                if (GraphicsEngine.camera._frustum.Intersects(hm.boundingBox))
                     hm.Draw(null);
-                Debug.DrawBoundingBox(Debug.CreateBoundingBoxBuffers(hm.boundingBox, GraphicsEngine.graphicsDevice), lineEffect, GraphicsEngine.graphicsDevice, GraphicsEngine.camera.ViewMatrix, GraphicsEngine.projectionMatrix);
+                //Debug.DrawBoundingBox(Debug.CreateBoundingBoxBuffers(hm.boundingBox, GraphicsEngine.graphicsDevice), lineEffect, GraphicsEngine.graphicsDevice, GraphicsEngine.camera.ViewMatrix, GraphicsEngine.projectionMatrix);
             }
             if (nodes != null)
                 foreach (SGNUnit unit in nodes)

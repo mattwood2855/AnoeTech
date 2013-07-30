@@ -135,8 +135,8 @@ namespace AnoeTech
             // Add the mesh to the world .
             triangleBody.IsStatic = true;
             world.AddBody(triangleBody);
-            BuildDrawableHeightMap();
-            boundingBox = new BoundingBox(_position, _position + new Vector3(terrainStep*terrainWidth,maxHeight,terrainStep*terrainHeight));
+            //BuildDrawableHeightMap();
+            boundingBox = new BoundingBox(_position, _position + new Vector3(terrainStep*terrainWidth,maxHeight,-terrainStep*terrainHeight));
         }
 
         public override void Destroy()
@@ -154,10 +154,10 @@ namespace AnoeTech
 
             vertices = new VertexMultitextured[terrainWidth * terrainHeight];
             
-            for (int x = 0; x < terrainWidth; x++)
-                for (int y = 0; y < terrainHeight; y++)
+            for (int y = 0; y < terrainWidth; y++)
+                for (int x = 0; x < terrainHeight; x++)
                 {
-                    vertices[x + y * terrainWidth].Position = new Vector3(x*terrainStep, _heightData[x, y], -y*terrainStep);
+                    vertices[x + y * terrainWidth].Position = new Vector3(y*terrainStep, _heightData[x, y], -x*terrainStep);
                     vertices[x + y * terrainWidth].TextureCoordinate.X = (float)x * terrainStep / 256.0f;
                     vertices[x + y * terrainWidth].TextureCoordinate.Y = (float)y * terrainStep / 256.0f;
 
@@ -191,12 +191,14 @@ namespace AnoeTech
                     int topRight = (x + 1) + (y + 1) * terrainWidth;
 
                     indices[counter++] = topLeft;
-                    indices[counter++] = lowerRight;
                     indices[counter++] = lowerLeft;
+                    indices[counter++] = lowerRight;
+                    
 
                     indices[counter++] = topLeft;
-                    indices[counter++] = topRight;
                     indices[counter++] = lowerRight;
+                    indices[counter++] = topRight;
+                    
                 }
         }
 
@@ -259,39 +261,11 @@ namespace AnoeTech
 	        return vertices[x + z * terrainHeight].Position.Y;			// Index Into Our Height Array And Return The Height}
         }
 
-        public void BuildDrawableHeightMap()
-        {
-            drawableVertices = new VertexMultitextured[_drawDistance * _drawDistance];
-            Vector2 cameraPosition = new Vector2(GraphicsEngine.camera.Position.X / terrainStep,
-                                                 -GraphicsEngine.camera.Position.Z / terrainStep);
-            int cameraCell = (int)(Math.Floor(cameraPosition.X) * terrainHeight + Math.Floor(cameraPosition.Y));
-            int leftright = (int)Math.Floor(_drawDistance / 2.0f);
-            int counter = 0;
-
-            while (cameraCell - leftrightRot < 0)
-                cameraCell += terrainHeight;
-            //while (cameraCell - leftrightRot < 0)
-            //    cameraCell += terrainHeight;
-            //while (cameraCell - leftrightRot < 0)
-            //    cameraCell += terrainHeight;
-            //while (cameraCell - leftrightRot < 0)
-            //    cameraCell += terrainHeight;
-
-            for (int x = -leftright; x < leftright; x++)
-                for (int y = -leftright; y < leftright; y++)
-                {
-                    //drawableVertices[counter] = vertices[cameraCell + y + x * terrainHeight];
-                    counter++;
-                }
-        }
-
         public void Update(SGNSkyDome sky)
         {
             ambientLighting = GameState.anoetech.sceneGraph.SkyDome.AmbientLight;
             lightDirection = GameState.anoetech.sceneGraph.SkyDome.LightDirection;
             color = GameState.anoetech.sceneGraph.SkyDome.lightColor;
-
-            BuildDrawableHeightMap();
         }
 
         public override void Draw( Object obj )
