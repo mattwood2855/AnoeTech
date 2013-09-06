@@ -63,12 +63,13 @@ namespace AnoeTech
         public SGNHeightmap(Vector3 position, Texture2D heightMapData, float step, float scale)
         {
             _position = position;                                       // Set the heightmap's starting position
-            _heightData = TerrainNodeBuilder.CreateHeightMatrix(heightMapData, step, scale);
+            _heightData = TerrainNodeBuilder.CreateHeightMatrix(heightMapData, scale);
             terrainStep = step;
             terrainScale = scale;
             terrainWidth = heightMapData.Width;
             terrainHeight = heightMapData.Height;   
             effect = GameState.contentManager.Load<Effect>("effects");  // Load an effect shader file for the heightmap
+            vertices = new VertexMultitextured[terrainWidth * terrainHeight];
         }
 
         public SGNHeightmap(Vector3 position, float[,] heightMapData, float step, float scale)
@@ -80,6 +81,7 @@ namespace AnoeTech
             terrainWidth = heightMapData.GetLength(0);
             terrainHeight = heightMapData.GetLength(1);   
             effect = GameState.contentManager.Load<Effect>("effects");  // Load an effect shader file for the heightmap
+            vertices = new VertexMultitextured[terrainWidth * terrainHeight];
         }
 
         #endregion
@@ -144,6 +146,21 @@ namespace AnoeTech
             throw new NotImplementedException();
         }
 
+        public void SetTextureCoords(VertexMultitextured[] coorsVerts)
+        {
+            for (int y = 0; y < terrainWidth; y++)
+                for (int x = 0; x < terrainHeight; x++)
+                {
+                    vertices[x + y * terrainWidth].TextureCoordinate.X = coorsVerts[x + y * terrainWidth].TextureCoordinate.X;
+                    vertices[x + y * terrainWidth].TextureCoordinate.Y = coorsVerts[x + y * terrainWidth].TextureCoordinate.Y;
+
+                    vertices[x + y * terrainWidth].TexWeights.X = coorsVerts[x + y * terrainWidth].TexWeights.X;
+                    vertices[x + y * terrainWidth].TexWeights.Y = coorsVerts[x + y * terrainWidth].TexWeights.Y;
+                    vertices[x + y * terrainWidth].TexWeights.Z = coorsVerts[x + y * terrainWidth].TexWeights.Z;
+                    vertices[x + y * terrainWidth].TexWeights.W = coorsVerts[x + y * terrainWidth].TexWeights.W;
+                }        
+        }
+
         private void SetUpVertices()
         {
             
@@ -152,7 +169,7 @@ namespace AnoeTech
                     if (_heightData[x, y] > maxHeight)
                         maxHeight = _heightData[x, y];
 
-            vertices = new VertexMultitextured[terrainWidth * terrainHeight];
+            
             
             for (int y = 0; y < terrainWidth; y++)
                 for (int x = 0; x < terrainHeight; x++)
